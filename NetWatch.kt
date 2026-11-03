@@ -330,37 +330,37 @@ object Prefs {
         mode = p.getString("mode", "monitor") ?: "monitor"
     }
 
-    fun setTheme(v: Int) {
+    fun changeTheme(v: Int) {
         theme = v
         sp?.edit()?.putInt("theme", v)?.apply()
     }
 
-    fun setAccent(v: Int) {
+    fun changeAccent(v: Int) {
         accent = v
         sp?.edit()?.putInt("accent", v)?.apply()
     }
 
-    fun setTextSize(v: Int) {
+    fun changeTextSize(v: Int) {
         textSize = v
         sp?.edit()?.putInt("textSize", v)?.apply()
     }
 
-    fun setCompact(v: Boolean) {
+    fun changeCompact(v: Boolean) {
         compact = v
         sp?.edit()?.putBoolean("compact", v)?.apply()
     }
 
-    fun setShowSystem(v: Boolean) {
+    fun changeShowSystem(v: Boolean) {
         showSystem = v
         sp?.edit()?.putBoolean("showSystem", v)?.apply()
     }
 
-    fun setUploadAlertMb(v: Int) {
+    fun changeUploadAlertMb(v: Int) {
         uploadAlertMb = v
         sp?.edit()?.putInt("uploadAlertMb", v)?.apply()
     }
 
-    fun setCustomFlags(v: String) {
+    fun changeCustomFlags(v: String) {
         customFlags = v
         sp?.edit()?.putString("customFlags", v)?.apply()
     }
@@ -368,13 +368,13 @@ object Prefs {
     fun addCustomFlag(word: String) {
         val w = word.trim().lowercase()
         if (w.isEmpty() || customFlagList().contains(w)) return
-        setCustomFlags(if (customFlags.isBlank()) w else "$customFlags, $w")
+        changeCustomFlags(if (customFlags.isBlank()) w else "$customFlags, $w")
     }
 
     fun customFlagList(): List<String> =
         customFlags.split(',').map { it.trim().lowercase() }.filter { it.isNotEmpty() }
 
-    fun setMode(v: String) {
+    fun changeMode(v: String) {
         mode = v
         sp?.edit()?.putString("mode", v)?.apply()
     }
@@ -1132,7 +1132,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun beginVpn(mode: String) {
-        Prefs.setMode(mode)
+        Prefs.changeMode(mode)
         val intent = VpnService.prepare(this)
         if (intent != null) vpnPermission.launch(intent) else startVpnService()
     }
@@ -1776,7 +1776,7 @@ fun SettingsScreen() {
     ) {
         item {
             SettingBlock("Theme") {
-                ChipRow(listOf("Auto", "Light", "Dark"), Prefs.theme) { Prefs.setTheme(it) }
+                ChipRow(listOf("Auto", "Light", "Dark"), Prefs.theme) { Prefs.changeTheme(it) }
             }
         }
         item {
@@ -1793,7 +1793,7 @@ fun SettingsScreen() {
                                     MaterialTheme.colorScheme.onSurface,
                                     CircleShape
                                 )
-                                .clickable { Prefs.setAccent(i) }
+                                .clickable { Prefs.changeAccent(i) }
                         )
                     }
                 }
@@ -1802,7 +1802,7 @@ fun SettingsScreen() {
         item {
             SettingBlock("Text size") {
                 ChipRow(listOf("Small", "Normal", "Large", "Extra large"), Prefs.textSize) {
-                    Prefs.setTextSize(it)
+                    Prefs.changeTextSize(it)
                 }
             }
         }
@@ -1811,20 +1811,20 @@ fun SettingsScreen() {
                 "Compact lists",
                 "Less spacing so more fits on screen",
                 Prefs.compact
-            ) { Prefs.setCompact(it) }
+            ) { Prefs.changeCompact(it) }
         }
         item {
             SwitchRow(
                 "Show system apps",
                 "Include phone software in the Apps list. Be careful when blocking these.",
                 Prefs.showSystem
-            ) { Prefs.setShowSystem(it) }
+            ) { Prefs.changeShowSystem(it) }
         }
         item {
             SettingBlock("Warn when an app uploads more than this in the background") {
                 val options = listOf(1, 5, 20, 50)
                 ChipRow(options.map { "$it MB" }, options.indexOf(Prefs.uploadAlertMb)) {
-                    Prefs.setUploadAlertMb(options[it])
+                    Prefs.changeUploadAlertMb(options[it])
                 }
             }
         }
@@ -1834,7 +1834,7 @@ fun SettingsScreen() {
                     value = keywords,
                     onValueChange = {
                         keywords = it
-                        Prefs.setCustomFlags(it)
+                        Prefs.changeCustomFlags(it)
                     },
                     label = { Text("e.g. ads, xyz.com, cdn") },
                     modifier = Modifier.fillMaxWidth()
